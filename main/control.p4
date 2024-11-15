@@ -53,7 +53,7 @@ control MainControlImpl(
         default_action = add_miss;
         size = 1024;
     }
-     
+    GETFlow() get_flow; 
     HEAVYHitter() heavy_hitter;
     SYNFlood() syn_flood;
     SYNACKFlood() syn_ack_flood;
@@ -66,7 +66,7 @@ control MainControlImpl(
     Register<bit<5>, bit<1>>(1) test;
 
     apply {
-        
+
         if(hdr.ipv4.isValid()) {
             forwarding.apply();
             meta.attack = 0;
@@ -84,20 +84,22 @@ control MainControlImpl(
                     ack_flood.apply(hdr, meta);
                     open_tcp.apply();
                 }
-                else if(hdr.tcp.flags == 0x01 || hdr.tcp.flags == 0x04 || hdr.tcp.flags == 0x05) { 
-                    //FIN 00001 RST 00100 FIN-RST 00101  , attack 4
+                else if(hdr.tcp.flags == 0x01 || hdr.tcp.flags == 0x04 || hdr.tcp.flags == 0x05) { //FIN-RST 00101  , attack 4
                     fin_flood.apply(hdr, meta);  
                     if(open_tcp.apply().miss){drop();} 
                 }
                 else { // TCP FLAGS 00000 , attack 5
+                    get_flow.apply(hdr, meta);
                     heavy_hitter.apply(hdr, meta);
                 }
             }
 
             if (hdr.icmp.isValid()){ 
                 if(hdr.icmp.type == 0x08 || hdr.icmp.type == 0x63) // REQ 0x8 or 0x63 , attack 6
+                get_flow.apply(hdr, meta);
                 icmp_flood.apply(hdr, meta);
             }
+            
         }
         attack.write(0,meta.attack);
     }

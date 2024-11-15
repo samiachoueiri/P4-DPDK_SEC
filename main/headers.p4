@@ -18,6 +18,7 @@ const bit<8> TYPE_ICMP = 1;
 //-----------------------------FIN-RST
 const ExpireTimeProfileId_t EXPIRE_TIME_PROFILE_ID = (ExpireTimeProfileId_t) 4;
 //-----------------------------ICMP-REQ
+#define THRESH_ICMP 200000
 
 header ethernet_t {
     EthernetAddress dstAddr;
@@ -64,11 +65,12 @@ header icmp_t {
 
 struct main_metadata_t {
     bit<5> attack;
-//-----------------------------HH
+
     bit<16> flow_id0;
     bit<16> flow_id1;
     bit<16> flow_id2;
     bit<16> flow_id3;
+//-----------------------------HH
     bit<20> count_0;
     bit<20> count_1;
     bit<20> count_2;
@@ -90,9 +92,12 @@ struct main_metadata_t {
 //-----------------------------FIN-RST
     bit<1> add;
 //-----------------------------ICMP-REQ
+    bit<20> dif0;
+    bit<20> dif1;
+    bit<20> dif2;
+    bit<20> dif3;
 
     bit<5> test;
-    bit<8> test2;
 }
 
 struct headers_t {

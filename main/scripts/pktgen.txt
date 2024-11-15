@@ -232,12 +232,15 @@ set 0 dst mac 00:00:00:00:00:22
 set 0 src ip 192.168.20.1/24
 set 0 dst ip 192.168.10.1
 set 0 size 1500
+set 0 rate 1
+set 0 tcp flag clr all
+
 set 0 proto icmp
 
+set 0 proto tcp
+set 0 tcp flag clr all
 
-page pcap
-enable 0 pcap
-page main
+
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++ HH from h3 to h2
 sudo pktgen -l 0,1 -n 4 -a 07:00.0 -- -P -m "1.0"
 
@@ -248,7 +251,5 @@ set 0 dst ip 192.168.10.1
 set 0 size 1500
 set 0 rate 1
 set 0 tcp flag clr all
-
-
 
 
