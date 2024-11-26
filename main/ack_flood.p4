@@ -1,3 +1,5 @@
+#include "registers.p4"
+
 control ACKFlood(
     inout headers_t       hdr,
     inout main_metadata_t meta)
@@ -7,7 +9,8 @@ control ACKFlood(
 
 
     apply {
-        meta.attack = 3;
+        attack.write(0,0x3);
+
         meta.add = 1;
         
         meta.ack_drop_percent = ACK_DROP_RATE;

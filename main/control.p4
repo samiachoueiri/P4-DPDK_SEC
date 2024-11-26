@@ -1,3 +1,4 @@
+#include "registers.p4"
 
 control MainControlImpl(
     inout headers_t       hdr,
@@ -17,18 +18,6 @@ control MainControlImpl(
         hdr.ipv4.ttl = hdr.ipv4.ttl -1;
     }
 
-    action noAction () {
-    }
-
-    action add_miss () {
-        if (meta.add == 1) {
-            add_entry(action_name = "noAction", action_params = {}, expire_time_profile_id = EXPIRE_TIME_PROFILE_ID);
-        }
-        else {
-            noAction();
-        }
-    }
-
     table forwarding {
         key = { 
             hdr.ipv4.dstAddr: exact; 
@@ -39,6 +28,18 @@ control MainControlImpl(
         }
         size = 1024;
         default_action = drop;
+    }
+
+    action noAction () {
+    }
+
+    action add_miss () {
+        if (meta.add == 1) {
+            add_entry(action_name = "noAction", action_params = {}, expire_time_profile_id = EXPIRE_TIME_PROFILE_ID);
+        }
+        else {
+            noAction();
+        }
     }
 
     table open_tcp {
@@ -53,25 +54,28 @@ control MainControlImpl(
         default_action = add_miss;
         size = 1024;
     }
-     
+        
+    GETTCPFlow() get_tcp_flow; 
+    GETICMPFlow() get_icmp_flow; 
     HEAVYHitter() heavy_hitter;
     SYNFlood() syn_flood;
     SYNACKFlood() syn_ack_flood;
     ACKFlood() ack_flood;
     FINFlood() fin_flood;
     ICMPFlood() icmp_flood;
+    UDPFlood() udp_flood;
 
-    Register<bit<5>, bit<1>>(1) attack;
+    // Register<bit<5>, bit<1>>(1) attack;
 
-    Register<bit<5>, bit<1>>(1) test;
+    Register<bit<16>, bit<1>>(1) proto;
 
     apply {
-        
+
         if(hdr.ipv4.isValid()) {
             forwarding.apply();
-            meta.attack = 0;
-            meta.test = (bit<5>)hdr.ipv4.protocol;
-            test.write(0,meta.test);
+
+            meta.proto = (bit<16>)hdr.ipv4.protocol;
+            proto.write(0,meta.proto);
 
             if(hdr.tcp.isValid()) {
                 if(hdr.tcp.flags == 0x2) { // SYN 00010 , attack 1
@@ -84,21 +88,33 @@ control MainControlImpl(
                     ack_flood.apply(hdr, meta);
                     open_tcp.apply();
                 }
-                else if(hdr.tcp.flags == 0x01 || hdr.tcp.flags == 0x04 || hdr.tcp.flags == 0x05) { 
-                    //FIN 00001 RST 00100 FIN-RST 00101  , attack 4
+                else if(hdr.tcp.flags == 0x01 || hdr.tcp.flags == 0x04 || hdr.tcp.flags == 0x05) { //FIN-RST 00101  , attack 4
                     fin_flood.apply(hdr, meta);  
                     if(open_tcp.apply().miss){drop();} 
                 }
                 else { // TCP FLAGS 00000 , attack 5
+                    get_tcp_flow.apply(hdr, meta);
                     heavy_hitter.apply(hdr, meta);
                 }
             }
-
-            if (hdr.icmp.isValid()){ 
-                if(hdr.icmp.type == 0x08 || hdr.icmp.type == 0x63) // REQ 0x8 or 0x63 , attack 6
+            else if (hdr.icmp.isValid()){ 
+                if(hdr.icmp.type == 0x08 || hdr.icmp.type == 0x63) // ICMP REQ 0x8 or 0x63 , attack 6
+                get_icmp_flow.apply(hdr, meta);
                 icmp_flood.apply(hdr, meta);
             }
+            else if (hdr.udp.isValid()){ 
+                udp_flood.apply(hdr, meta); // UDP , attack 7
+            }
+            else {
+                attack.write(0,0xF);
+                drop_packet();
+            }
+            
         }
-        attack.write(0,meta.attack);
+        else {
+            attack.write(0,0xF);
+            drop_packet();
+        }
+        
     }
 }
