@@ -22,10 +22,10 @@ control HEAVYHitter(
     //     meta.flow_id3 = h0.get_hash((bit<16>)300, {hdr.tcp.srcPort,hdr.tcp.dstPort,hdr.ipv4.srcAddr,hdr.ipv4.dstAddr}, (bit<16>)32768);
     // }
 
-    // Register<bit<20>, bit<16>>(32768) ht0;
-    // Register<bit<20>, bit<16>>(32768) ht1;
-    // Register<bit<20>, bit<16>>(32768) ht2;
-    // Register<bit<20>, bit<16>>(32768) ht3;
+    Register<bit<20>, bit<16>>(32768) ht0;
+    Register<bit<20>, bit<16>>(32768) ht1;
+    Register<bit<20>, bit<16>>(32768) ht2;
+    Register<bit<20>, bit<16>>(32768) ht3;
 
     // Register<bit<16>, bit<1>>(1) flow_id0;
     // Register<bit<16>, bit<1>>(1) flow_id1;
@@ -33,7 +33,7 @@ control HEAVYHitter(
     // Register<bit<16>, bit<1>>(1) flow_id3;
 
     apply {
-        meta.attack = 5;
+        attack.write(0,0x5);
 
         meta.minimum = 1048575;
         // hf0();

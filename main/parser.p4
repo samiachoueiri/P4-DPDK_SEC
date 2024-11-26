@@ -15,6 +15,7 @@ parser MainParserImpl( packet_in pkt,
         transition select(hdr.ipv4.protocol) {
             TYPE_TCP: parse_tcp;
             TYPE_ICMP: parse_icmp;
+            TYPE_UDP: parse_udp;
             default: accept;
         }
     } 
@@ -24,6 +25,10 @@ parser MainParserImpl( packet_in pkt,
     }
     state parse_icmp {
         pkt.extract(hdr.icmp);
+        transition accept;
+    }
+    state parse_udp {
+        pkt.extract(hdr.udp);
         transition accept;
     }
 }

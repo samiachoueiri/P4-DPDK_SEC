@@ -1,3 +1,5 @@
+#include "registers.p4"
+
 control SYNFlood(
     inout headers_t       hdr,
     inout main_metadata_t meta)
@@ -8,7 +10,7 @@ control SYNFlood(
 
 
     apply {
-        meta.attack = 1;
+        attack.write(0,0x1);
 
         // meta.syn_drop_percent = drop_percent_reg.read(0);
         meta.syn_drop_percent = SYN_DROP_RATE;

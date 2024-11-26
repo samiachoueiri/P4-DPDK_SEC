@@ -1,3 +1,5 @@
+#include "registers.p4"
+
 control SYNACKFlood(
     inout headers_t       hdr,
     inout main_metadata_t meta)
@@ -7,7 +9,7 @@ control SYNACKFlood(
 
 
     apply {
-        meta.attack = 2;
+        attack.write(0,0x2);
 
         meta.synack_drop_percent = SYNACK_DROP_RATE;
         meta.synack_counts = 0;

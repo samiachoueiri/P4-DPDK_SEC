@@ -9,5 +9,6 @@ control MainDeparserImpl(
         pkt.emit(hdr.ipv4);
         pkt.emit(hdr.tcp);
         pkt.emit(hdr.icmp);
+        pkt.emit(hdr.udp);
     }
 }

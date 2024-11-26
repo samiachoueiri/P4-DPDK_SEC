@@ -9,7 +9,9 @@
 #include "fin_flood.p4"
 #include "heavy_hitter.p4"
 #include "icmp_flood.p4"
-#include "get_flow.p4"
+#include "udp_flood.p4"
+#include "get_tcp_flow.p4"
+#include "get_icmp_flow.p4"
 #include "registers.p4"
 //---------------------------------------------------------------------------
 #include "parser.p4"
