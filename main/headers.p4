@@ -135,7 +135,11 @@ struct main_metadata_t {
     bit<1> value_sketch1;
     bit<1> value_sketch2;
 
-    bit<1> new_flow;
+    // bit<1> new_flow;
+    bit<2> state_ts;
+    bit<32> timestamp1;
+    bit<32> timestamp2;
+    bit<32> timestamp3;
 }
 
 struct headers_t {
