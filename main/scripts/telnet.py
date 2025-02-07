@@ -5,7 +5,7 @@ import time
 host = "0.0.0.0"
 port = 8086
 timeout = 1
-sps = 1
+sps = 5
 
 # Command to send
 # get_index = b"pipeline PIPELINE0 regrd reg_index_0 index 0\n"
@@ -29,18 +29,30 @@ ht1_tcp = b"pipeline PIPELINE1 regrd heavy_hitter_ht1 index 0x3370\n"
 ht2_tcp = b"pipeline PIPELINE1 regrd heavy_hitter_ht2 index 0x33D4\n"
 ht3_tcp = b"pipeline PIPELINE1 regrd heavy_hitter_ht3 index 0x3438\n"
 
-icmp0 = b"pipeline PIPELINE0 regrd get_icmp_flow_flow_icmp_id0 index 0\n"
-icmp1 = b"pipeline PIPELINE0 regrd get_icmp_flow_flow_icmp_id1 index 0\n"
-icmp2 = b"pipeline PIPELINE0 regrd get_icmp_flow_flow_icmp_id2 index 0\n"
-icmp3 = b"pipeline PIPELINE0 regrd get_icmp_flow_flow_icmp_id3 index 0\n"
+hh_ts1_0 = b"pipeline PIPELINE0 regrd reg_timestamp1 index 0\n"
+hh_ts1_1 = b"pipeline PIPELINE1 regrd reg_timestamp1 index 0\n"
+hh_ts1_2 = b"pipeline PIPELINE2 regrd reg_timestamp1 index 0\n"
+hh_ts1_3 = b"pipeline PIPELINE3 regrd reg_timestamp1 index 0\n"
 
-ht0_icmp = b"pipeline PIPELINE0 regrd icmp_flood_ht_icmp index 0x7e11\n"
-ht1_icmp = b"pipeline PIPELINE0 regrd icmp_flood_ht_icmp_0 index 0x7e75\n"
-ht2_icmp = b"pipeline PIPELINE0 regrd icmp_flood_ht_icmp_1 index 0x7ed9\n"
-ht3_icmp = b"pipeline PIPELINE0 regrd icmp_flood_ht_icmp_2 index 0x7f3d\n"
+hh_ts2_0 = b"pipeline PIPELINE0 regrd reg_timestamp2 index 0\n"
+hh_ts2_1 = b"pipeline PIPELINE1 regrd reg_timestamp2 index 0\n"
+hh_ts2_2 = b"pipeline PIPELINE2 regrd reg_timestamp2 index 0\n"
+hh_ts2_3 = b"pipeline PIPELINE3 regrd reg_timestamp2 index 0\n"
 
-udp = b"pipeline PIPELINE1 regrd udp_flood_udp_counts_reg index 0\n"
+hh_ts3_0 = b"pipeline PIPELINE0 regrd reg_timestamp3 index 0\n"
+hh_ts3_1 = b"pipeline PIPELINE1 regrd reg_timestamp3 index 0\n"
+hh_ts3_2 = b"pipeline PIPELINE2 regrd reg_timestamp3 index 0\n"
+hh_ts3_3 = b"pipeline PIPELINE3 regrd reg_timestamp3 index 0\n"
 
+# icmp0 = b"pipeline PIPELINE0 regrd get_icmp_flow_flow_icmp_id0 index 0\n"
+# icmp1 = b"pipeline PIPELINE0 regrd get_icmp_flow_flow_icmp_id1 index 0\n"
+# icmp2 = b"pipeline PIPELINE0 regrd get_icmp_flow_flow_icmp_id2 index 0\n"
+# icmp3 = b"pipeline PIPELINE0 regrd get_icmp_flow_flow_icmp_id3 index 0\n"
+
+# ht0_icmp = b"pipeline PIPELINE0 regrd icmp_flood_ht_icmp index 0x7e11\n"
+# ht1_icmp = b"pipeline PIPELINE0 regrd icmp_flood_ht_icmp_0 index 0x7e75\n"
+# ht2_icmp = b"pipeline PIPELINE0 regrd icmp_flood_ht_icmp_1 index 0x7ed9\n"
+# ht3_icmp = b"pipeline PIPELINE0 regrd icmp_flood_ht_icmp_2 index 0x7f3d\n"
 
 # Function to connect to telnet server and send command
 def telnet_session(host, port, timeout):
@@ -170,59 +182,137 @@ def telnet_session(host, port, timeout):
 
                 print("TCP count:","h0",ht0_dec,"h1",ht1_dec,"h2",ht2_dec,"h3",ht3_dec)
 
-                print("------ ICMP")
-
-                tn.write(icmp0)
+                tn.write(hh_ts1_0)
                 output = tn.read_until(b"\n", timeout)
                 string_output = output.decode('utf-8')
-                icmp0_hex = string_output.split(' ')[1].strip()
-                icmp0_dec = int(icmp0_hex, 16)
+                ts10_hex = string_output.split(' ')[1].strip()
+                ts10_dec = int(ts10_hex, 16)
 
-                tn.write(icmp1)
+                tn.write(hh_ts1_1)
                 output = tn.read_until(b"\n", timeout)
                 string_output = output.decode('utf-8')
-                icmp1_hex = string_output.split(' ')[1].strip()
-                icmp1_dec = int(icmp1_hex, 16)
+                ts11_hex = string_output.split(' ')[1].strip()
+                ts11_dec = int(ts11_hex, 16)
 
-                tn.write(icmp2)
+                tn.write(hh_ts1_2)
                 output = tn.read_until(b"\n", timeout)
                 string_output = output.decode('utf-8')
-                icmp2_hex = string_output.split(' ')[1].strip()
-                icmp2_dec = int(icmp2_hex, 16)
+                ts12_hex = string_output.split(' ')[1].strip()
+                ts12_dec = int(ts12_hex, 16)
 
-                tn.write(icmp3)
+                tn.write(hh_ts1_3)
                 output = tn.read_until(b"\n", timeout)
                 string_output = output.decode('utf-8')
-                icmp3_hex = string_output.split(' ')[1].strip()
-                icmp3_dec = int(icmp3_hex, 16)
+                ts13_hex = string_output.split(' ')[1].strip()
+                ts13_dec = int(ts13_hex, 16)
 
-                print("ICMP flow:","h0",icmp0_hex,"h1",icmp1_hex,"h2",icmp2_hex,"h3",icmp3_hex)
+                print("HH_ts1:","ts1_0",ts10_dec,"ts1_1",ts11_dec,"ts1_2",ts12_dec,"ts1_3",ts13_dec)
 
-                tn.write(ht0_icmp)
+                tn.write(hh_ts2_0)
                 output = tn.read_until(b"\n", timeout)
                 string_output = output.decode('utf-8')
-                ht0_hex = string_output.split(' ')[1].strip()
-                ht0_dec = int(ht0_hex, 16)
+                ts20_hex = string_output.split(' ')[1].strip()
+                ts20_dec = int(ts20_hex, 16)
 
-                tn.write(ht1_icmp)
+                tn.write(hh_ts2_1)
                 output = tn.read_until(b"\n", timeout)
                 string_output = output.decode('utf-8')
-                ht1_hex = string_output.split(' ')[1].strip()
-                ht1_dec = int(ht1_hex, 16)
+                ts21_hex = string_output.split(' ')[1].strip()
+                ts21_dec = int(ts21_hex, 16)
 
-                tn.write(ht2_icmp)
+                tn.write(hh_ts2_2)
                 output = tn.read_until(b"\n", timeout)
                 string_output = output.decode('utf-8')
-                ht2_hex = string_output.split(' ')[1].strip()
-                ht2_dec = int(ht2_hex, 16)
+                ts22_hex = string_output.split(' ')[1].strip()
+                ts22_dec = int(ts22_hex, 16)
 
-                tn.write(ht3_icmp)
+                tn.write(hh_ts2_3)
                 output = tn.read_until(b"\n", timeout)
                 string_output = output.decode('utf-8')
-                ht3_hex = string_output.split(' ')[1].strip()
-                ht3_dec = int(ht3_hex, 16)
+                ts23_hex = string_output.split(' ')[1].strip()
+                ts23_dec = int(ts23_hex, 16)
 
-                print("ICMP count:","h0",ht0_dec,"h1",ht1_dec,"h2",ht2_dec,"h3",ht3_dec)
+                print("HH_ts2:","ts2_0",ts20_dec,"ts2_1",ts21_dec,"ts2_2",ts22_dec,"ts2_3",ts23_dec)
+
+                tn.write(hh_ts3_0)
+                output = tn.read_until(b"\n", timeout)
+                string_output = output.decode('utf-8')
+                ts30_hex = string_output.split(' ')[1].strip()
+                ts30_dec = int(ts30_hex, 16)
+
+                tn.write(hh_ts3_1)
+                output = tn.read_until(b"\n", timeout)
+                string_output = output.decode('utf-8')
+                ts31_hex = string_output.split(' ')[1].strip()
+                ts31_dec = int(ts31_hex, 16)
+
+                tn.write(hh_ts3_2)
+                output = tn.read_until(b"\n", timeout)
+                string_output = output.decode('utf-8')
+                ts32_hex = string_output.split(' ')[1].strip()
+                ts32_dec = int(ts32_hex, 16)
+
+                tn.write(hh_ts3_3)
+                output = tn.read_until(b"\n", timeout)
+                string_output = output.decode('utf-8')
+                ts33_hex = string_output.split(' ')[1].strip()
+                ts33_dec = int(ts33_hex, 16)
+
+                print("HH_ts3:","ts3_0",ts30_dec,"ts3_1",ts31_dec,"ts3_2",ts32_dec,"ts3_3",ts33_dec)
+
+                # print("------ ICMP")
+
+                # tn.write(icmp0)
+                # output = tn.read_until(b"\n", timeout)
+                # string_output = output.decode('utf-8')
+                # icmp0_hex = string_output.split(' ')[1].strip()
+                # icmp0_dec = int(icmp0_hex, 16)
+
+                # tn.write(icmp1)
+                # output = tn.read_until(b"\n", timeout)
+                # string_output = output.decode('utf-8')
+                # icmp1_hex = string_output.split(' ')[1].strip()
+                # icmp1_dec = int(icmp1_hex, 16)
+
+                # tn.write(icmp2)
+                # output = tn.read_until(b"\n", timeout)
+                # string_output = output.decode('utf-8')
+                # icmp2_hex = string_output.split(' ')[1].strip()
+                # icmp2_dec = int(icmp2_hex, 16)
+
+                # tn.write(icmp3)
+                # output = tn.read_until(b"\n", timeout)
+                # string_output = output.decode('utf-8')
+                # icmp3_hex = string_output.split(' ')[1].strip()
+                # icmp3_dec = int(icmp3_hex, 16)
+
+                # print("ICMP flow:","h0",icmp0_hex,"h1",icmp1_hex,"h2",icmp2_hex,"h3",icmp3_hex)
+
+                # tn.write(ht0_icmp)
+                # output = tn.read_until(b"\n", timeout)
+                # string_output = output.decode('utf-8')
+                # ht0_hex = string_output.split(' ')[1].strip()
+                # ht0_dec = int(ht0_hex, 16)
+
+                # tn.write(ht1_icmp)
+                # output = tn.read_until(b"\n", timeout)
+                # string_output = output.decode('utf-8')
+                # ht1_hex = string_output.split(' ')[1].strip()
+                # ht1_dec = int(ht1_hex, 16)
+
+                # tn.write(ht2_icmp)
+                # output = tn.read_until(b"\n", timeout)
+                # string_output = output.decode('utf-8')
+                # ht2_hex = string_output.split(' ')[1].strip()
+                # ht2_dec = int(ht2_hex, 16)
+
+                # tn.write(ht3_icmp)
+                # output = tn.read_until(b"\n", timeout)
+                # string_output = output.decode('utf-8')
+                # ht3_hex = string_output.split(' ')[1].strip()
+                # ht3_dec = int(ht3_hex, 16)
+
+                # print("ICMP count:","h0",ht0_dec,"h1",ht1_dec,"h2",ht2_dec,"h3",ht3_dec)
 
                 print("++++++++++++++++++++++++++++++++++++++++++++++++")
                 time.sleep(1/sps)

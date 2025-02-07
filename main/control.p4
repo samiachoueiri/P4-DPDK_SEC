@@ -68,12 +68,12 @@ control MainControlImpl(
     // Register<bit<5>, bit<1>>(1) attack;
 
     Register<bit<16>, bit<1>>(1) proto;
-
+    
     apply {
 
         if(hdr.ipv4.isValid()) {
             forwarding.apply();
-
+            
             meta.proto = (bit<16>)hdr.ipv4.protocol;
             proto.write(0,meta.proto);
 

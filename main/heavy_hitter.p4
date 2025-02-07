@@ -34,6 +34,13 @@ control HEAVYHitter(
 
     apply {
         attack.write(0,0x5);
+        // // timestamp1 state 0
+        // meta.state_ts = reg_state_ts.read(0);
+        // if(meta.state_ts == 0){ 
+        //     meta.timestamp1 = ((bit<64>)istd.timestamp)[31:0];
+        //     reg_timestamp1.write(0, meta.timestamp1);
+        //     reg_state_ts.write(0,meta.state_ts+1);
+        // }
 
         meta.minimum = 1048575;
         // hf0();
@@ -66,12 +73,21 @@ control HEAVYHitter(
             meta.minimum = meta.count_2;
         }
 
-        meta.dif = meta.minimum - meta.count_3;
-        if(meta.dif > 0){
-            meta.minimum = meta.count_3;
-        }
+        // meta.dif = meta.minimum - meta.count_3;
+        // if(meta.dif > 0){
+        //     meta.minimum = meta.count_3;
+        // }
         
         if(meta.minimum > THRESH_HH){
+            // // timestamp3 state 2
+            // // reg_state_ts.write(0,meta.state_ts+1);
+            // meta.state_ts = reg_state_ts.read(0)+1;
+            // if(meta.state_ts == 2){ 
+            //     meta.timestamp3 = ((bit<64>)istd.timestamp)[31:0];
+            //     reg_timestamp3.write(0, meta.timestamp3);
+            //     reg_state_ts.write(0,meta.state_ts+1);
+            // }
+
             drop_packet();
         } 
         else {
@@ -79,7 +95,17 @@ control HEAVYHitter(
             ht1.write(meta.flow_id1,meta.count_1+1);
             ht2.write(meta.flow_id2,meta.count_2+1);
             ht3.write(meta.flow_id3,meta.count_3+1);
+            // // timestamp2 state 1
+            // meta.state_ts = reg_state_ts.read(0);
+            // if(meta.state_ts == 1){ 
+            //     meta.timestamp2 = ((bit<64>)istd.timestamp)[31:0];
+            //     reg_timestamp2.write(0, meta.timestamp2);
+            //     // reg_state_ts.write(0,meta.state_ts+1);
+            // }
         }
+
+        // meta.timestamp2 = ((bit<64>)istd.timestamp)[31:0];
+        // reg_timestamp2.write(0, meta.timestamp2);
 
     }
 }

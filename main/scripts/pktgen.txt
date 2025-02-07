@@ -53,7 +53,7 @@ range 0 size start 1500
 range 0 size min 1500
 range 0 size max 1500
 
-range 0 tcp flag clr all
+range 0 tcp flag clr
 
 enable 0 range
 page main
@@ -95,6 +95,13 @@ set 0 dst mac 00:00:00:00:00:22
 set 0 src ip 192.168.20.1/24
 set 0 dst ip 192.168.10.1
 set 0 size 1500
+set 0 rate 10
+-----------------------
+set 0 src mac 00:00:00:00:00:03
+set 0 dst mac 00:00:00:00:00:22
+set 0 src ip 192.168.20.1/24
+set 0 dst ip 192.168.10.1
+set 0 size 1500
 set 0 rate 1
 set 0 tcp flag clr all
 set 0 tcp flag set syn
@@ -130,6 +137,14 @@ range 0 tcp flag set ack
 
 enable 0 range
 page main
+
+set 0 src mac 00:00:00:00:00:03
+set 0 dst mac 00:00:00:00:00:22
+set 0 src ip 192.168.20.1/24
+set 0 dst ip 192.168.10.1
+set 0 size 1500
+set 0 rate 10
+
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++ ACK Flood from h3 to h2
 sudo pktgen -l 0,1 -n 4 -a 07:00.0 -- -P -m "1.0"
 
@@ -251,7 +266,7 @@ set 0 dst mac 00:00:00:00:00:22
 set 0 src ip 192.168.20.1/24
 set 0 dst ip 192.168.10.1
 set 0 size 1500
-set 0 rate 1
+set 0 rate 10
 set 0 tcp flag clr all
 
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++ UDP Flood from h3 to h2
